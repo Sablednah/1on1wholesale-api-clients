@@ -193,7 +193,7 @@ Prices are **not** read from the XML; lines are charged at your account's trade 
 
 Older aliases are still accepted, case-insensitively: `express`, `nextday`, `DPD Next Day`, `DHL Next Working Day` → `NEXTDAY`; `Evri Next Day`, `Tracked 24 Class Post`, `TRACKED 24`, `Tracked 24 Delivery` → `TRACKED24`; `Royal Mail Tracked 24`, `Royal Mail Tracked delivery 24` → `RM24`; `Royal Mail Tracked 48` → `RM48`; `Saturday Delivery`, `weekend` → `SATURDAY`.
 
-Highlands & Islands and Channel Islands postcodes: `STANDARD` and `TRACKED24` are switched to **Royal Mail Tracked 48** at the same price (Evri does not deliver there).
+Highlands & Islands and Channel Islands postcodes: `STANDARD` and `TRACKED24` are switched to **Royal Mail Tracked 48** (Evri does not deliver there).
 
 Non-GB: `shippingtype` is ignored. EU (plus NO, CH, LI, MC, RS, BA) = "EU Shipping" £15.30; everywhere else = "Non UK" £25.40.
 
