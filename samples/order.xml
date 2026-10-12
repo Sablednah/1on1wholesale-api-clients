@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order>
+  <dropshipper>
+    <auth>
+      <id>you@yourshop.example</id>
+      <key>your-api-key-here</key>
+    </auth>
+  </dropshipper>
+  <orderno>YOUR-ORDER-123</orderno>
+  <shippingaddress>
+    <firstname>Jane</firstname>
+    <lastname>Smith</lastname>
+    <street>12 High Street|Flat 3</street>
+    <city>Manchester</city>
+    <region>Greater Manchester</region>
+    <postcode>M1 1AA</postcode>
+    <country_id>GB</country_id>
+    <telephone>07700900123</telephone>
+    <email>jane.smith@example.com</email>
+  </shippingaddress>
+  <orderitems>
+    <orderitem>
+      <product>N0533</product>
+      <childproduct/>
+      <quantity>1</quantity>
+    </orderitem>
+    <orderitem>
+      <product>N9127</product>
+      <childproduct>NS6335</childproduct>
+      <quantity>2</quantity>
+    </orderitem>
+  </orderitems>
+  <shipping>
+    <shippingtype>TRACKED24</shippingtype>
+  </shipping>
+</order>

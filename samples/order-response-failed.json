@@ -1,0 +1,5 @@
+[
+  {"sku": "N0533",  "error": 1, "productstatus": "out of stock"},
+  {"sku": "NS6335", "error": 0, "productstatus": "In stock"},
+  {"orderid": null}
+]

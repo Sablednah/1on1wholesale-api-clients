@@ -1,0 +1,137 @@
+{
+  "info": {
+    "name": "1on1 Wholesale API",
+    "description": "Order API and Order Status & Tracking feed for 1on1wholesale.co.uk trade accounts.\n\nSet the collection variables `email` (your login email) and `key` (API key from My Account -> API Documentation). Every request sends a User-Agent header - requests without one are rejected with 403.\n\nWARNING: 'Send order' places a REAL order when the XML is valid and in stock.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "email", "value": "you@yourshop.example" },
+    { "key": "key", "value": "your-api-key-here" },
+    { "key": "base", "value": "https://www.1on1wholesale.co.uk" }
+  ],
+  "item": [
+    {
+      "name": "Order API - Send order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "User-Agent", "value": "PostmanClient/1.0" },
+          { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+        ],
+        "url": { "raw": "{{base}}/API/order/internal-import/index.php", "host": ["{{base}}"], "path": ["API", "order", "internal-import", "index.php"] },
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "xmlfeed",
+              "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<order>\n  <dropshipper><auth><id>{{email}}</id><key>{{key}}</key></auth></dropshipper>\n  <orderno>SHOP-10001</orderno>\n  <shippingaddress>\n    <firstname>Jane</firstname>\n    <lastname>Smith</lastname>\n    <street>12 High Street|Flat 3</street>\n    <city>Manchester</city>\n    <region>Greater Manchester</region>\n    <postcode>M1 1AA</postcode>\n    <country_id>GB</country_id>\n    <telephone>07700900123</telephone>\n    <email>jane.smith@example.com</email>\n  </shippingaddress>\n  <orderitems>\n    <orderitem><product>N0533</product><childproduct/><quantity>1</quantity></orderitem>\n    <orderitem><product>N9127</product><childproduct>NS6335</childproduct><quantity>2</quantity></orderitem>\n  </orderitems>\n  <shipping><shippingtype>TRACKED24</shippingtype></shipping>\n</order>"
+            }
+          ]
+        },
+        "description": "Places a REAL order if valid. Response is always HTTP 200: a JSON array ending in {\"orderid\": ...} or a plain-text 'Fatal error: ...' message."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const body = pm.response.text().trim();",
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "if (/fatal error/i.test(body)) {",
+              "  pm.test('Rejected: ' + body.replace(/<[^>]+>/g, ''), () => { throw new Error(body); });",
+              "} else {",
+              "  const rows = JSON.parse(body);",
+              "  const last = rows[rows.length - 1];",
+              "  pm.test('Order created: ' + last.orderid, () => pm.expect(last.orderid).to.not.be.null);",
+              "  rows.slice(0, -1).forEach(r => pm.test(r.sku + ': ' + r.productstatus, () => pm.expect(r.error).to.eql(0)));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order API - Send order (expect API Key incorect)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "User-Agent", "value": "PostmanClient/1.0" },
+          { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+        ],
+        "url": { "raw": "{{base}}/API/order/internal-import/index.php", "host": ["{{base}}"], "path": ["API", "order", "internal-import", "index.php"] },
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "xmlfeed",
+              "value": "<?xml version=\"1.0\"?><order><dropshipper><auth><id>{{email}}</id><key>wrong-key-on-purpose</key></auth></dropshipper><orderno>CONNECTIVITY-TEST</orderno><shippingaddress><firstname>T</firstname><lastname>T</lastname><street>1</street><city>C</city><postcode>M1 1AA</postcode><country_id>GB</country_id></shippingaddress><orderitems><orderitem><product>N0533</product><childproduct/><quantity>1</quantity></orderitem></orderitems><shipping><shippingtype>STANDARD</shippingtype></shipping></order>"
+            }
+          ]
+        },
+        "description": "Safe connectivity test: a deliberately wrong key proves transport, encoding and the xmlfeed field without creating anything. Expect the body 'Fatal error: API Key incorect'."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "pm.test('Reached the API (key rejected as expected)', () => pm.expect(pm.response.text()).to.include('API Key incorect'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Status feed - last 14 days",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "User-Agent", "value": "PostmanClient/1.0" } ],
+        "url": {
+          "raw": "{{base}}/order_status_xml.php?email={{email}}&key={{key}}",
+          "host": ["{{base}}"], "path": ["order_status_xml.php"],
+          "query": [ { "key": "email", "value": "{{email}}" }, { "key": "key", "value": "{{key}}" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+              "const n = (pm.response.text().match(/<order>/g) || []).length;",
+              "pm.test(n + ' order(s) returned (0 can mean wrong email/key - the feed does not report credential errors)', () => true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Status feed - last 7 days (week=1)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "User-Agent", "value": "PostmanClient/1.0" } ],
+        "url": {
+          "raw": "{{base}}/order_status_xml.php?email={{email}}&key={{key}}&week=1",
+          "host": ["{{base}}"], "path": ["order_status_xml.php"],
+          "query": [ { "key": "email", "value": "{{email}}" }, { "key": "key", "value": "{{key}}" }, { "key": "week", "value": "1" } ]
+        }
+      }
+    },
+    {
+      "name": "Status feed - all orders (full=1, slow)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "User-Agent", "value": "PostmanClient/1.0" } ],
+        "url": {
+          "raw": "{{base}}/order_status_xml.php?email={{email}}&key={{key}}&full=1",
+          "host": ["{{base}}"], "path": ["order_status_xml.php"],
+          "query": [ { "key": "email", "value": "{{email}}" }, { "key": "key", "value": "{{key}}" }, { "key": "full", "value": "1" } ]
+        }
+      }
+    }
+  ]
+}

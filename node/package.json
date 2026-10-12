@@ -1,0 +1,8 @@
+{
+  "name": "net1on1-api-client",
+  "version": "1.0.0",
+  "description": "Client for the 1on1 Wholesale Order API and Order Status feed (zero dependencies)",
+  "main": "net1on1.js",
+  "license": "MIT",
+  "engines": { "node": ">=14" }
+}
