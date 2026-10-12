@@ -191,7 +191,7 @@ Prices are **not** read from the XML; lines are charged at your account's trade 
 | `RM48` | Royal Mail Tracked 48 | £4.50 |
 | `SATURDAY` | Evri Next Day (no dedicated Saturday service) | £4.13 |
 
-Older aliases (`express`, `nextday`, `DPD Next Day`, `DHL Next Working Day`, `Evri Next Day`, `Tracked 24 Class Post`, `TRACKED 24`, `Saturday Delivery`, `weekend` …) are still accepted, case-insensitively.
+Older aliases are still accepted, case-insensitively: `express`, `nextday`, `DPD Next Day`, `DHL Next Working Day` → `NEXTDAY`; `Evri Next Day`, `Tracked 24 Class Post`, `TRACKED 24`, `Tracked 24 Delivery` → `TRACKED24`; `Royal Mail Tracked 24`, `Royal Mail Tracked delivery 24` → `RM24`; `Royal Mail Tracked 48` → `RM48`; `Saturday Delivery`, `weekend` → `SATURDAY`.
 
 Highlands & Islands and Channel Islands postcodes: `STANDARD` and `TRACKED24` are switched to **Royal Mail Tracked 48** at the same price (Evri does not deliver there).
 
