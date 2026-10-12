@@ -58,8 +58,8 @@ $result = $client->sendOrder([
         'telephone' => '07700900123', 'email' => 'jane@example.com',
     ],
     'items' => [
-        ['sku' => 'N0533', 'quantity' => 1],
-        ['sku' => 'N9127', 'variation' => 'NS6335', 'quantity' => 2],
+        ['sku' => 'N13125', 'quantity' => 1],
+        ['sku' => 'N12946', 'variation' => 'NS8102', 'quantity' => 2],
     ],
 ]);
 // $result['success'], $result['order_id'], $result['lines'][...]{sku, ok, status}
@@ -82,7 +82,7 @@ result = client.send_order(Order(
     address=Address(firstname="Jane", lastname="Smith", street="12 High Street", street2="Flat 3",
                     city="Manchester", region="Greater Manchester", postcode="M1 1AA", country="GB",
                     telephone="07700900123", email="jane@example.com"),
-    items=[Item("N0533", 1), Item("N9127", 2, variation="NS6335")],
+    items=[Item("N13125", 1), Item("N12946", 2, variation="NS8102")],
 ))
 # result.success, result.order_id, result.lines[...] (sku, ok, status)
 
@@ -103,7 +103,7 @@ const result = await client.sendOrder({
   address: { firstname: 'Jane', lastname: 'Smith', street: '12 High Street', street2: 'Flat 3',
              city: 'Manchester', region: 'Greater Manchester', postcode: 'M1 1AA', country: 'GB',
              telephone: '07700900123', email: 'jane@example.com' },
-  items: [{ sku: 'N0533', quantity: 1 }, { sku: 'N9127', variation: 'NS6335', quantity: 2 }],
+  items: [{ sku: 'N13125', quantity: 1 }, { sku: 'N12946', variation: 'NS8102', quantity: 2 }],
 });
 // result.success, result.orderId, result.lines[...] {sku, ok, status}
 
@@ -151,8 +151,8 @@ curl -A "MyShop/1.0" "https://www.1on1wholesale.co.uk/order_status_xml.php?email
     <email>jane@example.com</email>
   </shippingaddress>
   <orderitems>
-    <orderitem><product>N0533</product><childproduct/><quantity>1</quantity></orderitem>
-    <orderitem><product>N9127</product><childproduct>NS6335</childproduct><quantity>2</quantity></orderitem>
+    <orderitem><product>N13125</product><childproduct/><quantity>1</quantity></orderitem>
+    <orderitem><product>N12946</product><childproduct>NS8102</childproduct><quantity>2</quantity></orderitem>
   </orderitems>
   <shipping><shippingtype>TRACKED24</shippingtype></shipping>
 </order>
@@ -205,8 +205,8 @@ Created:
 
 ```json
 [
-  {"sku": "N0533",  "error": 0, "productstatus": "In stock"},
-  {"sku": "NS6335", "error": 0, "productstatus": "In stock"},
+  {"sku": "N13125",  "error": 0, "productstatus": "In stock"},
+  {"sku": "NS8102", "error": 0, "productstatus": "In stock"},
   {"orderid": "5148307"}
 ]
 ```
@@ -215,13 +215,13 @@ Not created (**no partial orders** - fix the failing line and resend with the sa
 
 ```json
 [
-  {"sku": "N0533",  "error": 1, "productstatus": "out of stock"},
-  {"sku": "NS6335", "error": 0, "productstatus": "In stock"},
+  {"sku": "N13125",  "error": 1, "productstatus": "out of stock"},
+  {"sku": "NS8102", "error": 0, "productstatus": "In stock"},
   {"orderid": null}
 ]
 ```
 
-`productstatus` is `In stock`, `out of stock` or `not available` (SKU unknown). `orderid` is the 1on1 order number - the `orderref` you will see in the status feed.
+`productstatus` is `In stock`, `out of stock`, `not available` (SKU unknown) or `variation required - send the variation (NS) SKU in childproduct` (variable product sent without a variation). `orderid` is the 1on1 order number - the `orderref` you will see in the status feed.
 
 Rejected (plain text, still HTTP 200):
 

@@ -87,8 +87,8 @@ class Net1on1Client
      *     'telephone' => '07700900123', 'email' => 'jane@example.com',
      *   ],
      *   'items' => [
-     *     ['sku' => 'N0533', 'quantity' => 1],
-     *     ['sku' => 'N9127', 'variation' => 'NS6335', 'quantity' => 2],
+     *     ['sku' => 'N13125', 'quantity' => 1],
+     *     ['sku' => 'N12946', 'variation' => 'NS8102', 'quantity' => 2],
      *   ],
      * ]
      */
@@ -168,7 +168,7 @@ class Net1on1Client
      * @return array {
      *   success:  bool          true when an order was created
      *   order_id: string|null   1on1 order number (the status feed's <orderref>)
-     *   lines:    array         [{sku, ok (bool), status ('In stock'|'out of stock'|'not available')}]
+     *   lines:    array         [{sku, ok (bool), status ('In stock'|'out of stock'|'not available'|'variation required ...')}]
      *   raw:      string        raw response body
      * }
      * @throws Net1on1ApiException on a "Fatal error:" rejection

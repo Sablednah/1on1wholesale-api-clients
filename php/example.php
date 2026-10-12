@@ -23,8 +23,8 @@ try {
             'email'     => 'jane.smith@example.com',
         ],
         'items' => [
-            ['sku' => 'N0533', 'quantity' => 1],
-            ['sku' => 'N9127', 'variation' => 'NS6335', 'quantity' => 2],
+            ['sku' => 'N13125', 'quantity' => 1],
+            ['sku' => 'N12946', 'variation' => 'NS8102', 'quantity' => 2],
         ],
     ]);
 

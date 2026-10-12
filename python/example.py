@@ -17,8 +17,8 @@ order = Order(
         telephone="07700900123", email="jane.smith@example.com",
     ),
     items=[
-        Item(sku="N0533", quantity=1),
-        Item(sku="N9127", variation="NS6335", quantity=2),
+        Item(sku="N13125", quantity=1),
+        Item(sku="N12946", variation="NS8102", quantity=2),
     ],
 )
 

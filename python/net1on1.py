@@ -88,7 +88,7 @@ class Order:
 class LineResult:
     sku: str
     ok: bool
-    status: str                  # 'In stock' | 'out of stock' | 'not available'
+    status: str                  # 'In stock' | 'out of stock' | 'not available' | 'variation required ...'
 
 
 @dataclass

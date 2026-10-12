@@ -90,7 +90,7 @@ class Net1on1Client {
    *   shipping: 'TRACKED24',                    // optional, GB only
    *   ignoreUnknownSkus: false,                 // optional
    *   address: { firstname, lastname, street, street2?, city, region?, postcode, country, telephone?, email? },
-   *   items: [ { sku: 'N0533', quantity: 1 }, { sku: 'N9127', variation: 'NS6335', quantity: 2 } ],
+   *   items: [ { sku: 'N13125', quantity: 1 }, { sku: 'N12946', variation: 'NS8102', quantity: 2 } ],
    * }
    */
   buildOrderXml(order) {

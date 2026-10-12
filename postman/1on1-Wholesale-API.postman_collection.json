@@ -24,7 +24,7 @@
           "urlencoded": [
             {
               "key": "xmlfeed",
-              "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<order>\n  <dropshipper><auth><id>{{email}}</id><key>{{key}}</key></auth></dropshipper>\n  <orderno>SHOP-10001</orderno>\n  <shippingaddress>\n    <firstname>Jane</firstname>\n    <lastname>Smith</lastname>\n    <street>12 High Street|Flat 3</street>\n    <city>Manchester</city>\n    <region>Greater Manchester</region>\n    <postcode>M1 1AA</postcode>\n    <country_id>GB</country_id>\n    <telephone>07700900123</telephone>\n    <email>jane.smith@example.com</email>\n  </shippingaddress>\n  <orderitems>\n    <orderitem><product>N0533</product><childproduct/><quantity>1</quantity></orderitem>\n    <orderitem><product>N9127</product><childproduct>NS6335</childproduct><quantity>2</quantity></orderitem>\n  </orderitems>\n  <shipping><shippingtype>TRACKED24</shippingtype></shipping>\n</order>"
+              "value": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<order>\n  <dropshipper><auth><id>{{email}}</id><key>{{key}}</key></auth></dropshipper>\n  <orderno>SHOP-10001</orderno>\n  <shippingaddress>\n    <firstname>Jane</firstname>\n    <lastname>Smith</lastname>\n    <street>12 High Street|Flat 3</street>\n    <city>Manchester</city>\n    <region>Greater Manchester</region>\n    <postcode>M1 1AA</postcode>\n    <country_id>GB</country_id>\n    <telephone>07700900123</telephone>\n    <email>jane.smith@example.com</email>\n  </shippingaddress>\n  <orderitems>\n    <orderitem><product>N13125</product><childproduct/><quantity>1</quantity></orderitem>\n    <orderitem><product>N12946</product><childproduct>NS8102</childproduct><quantity>2</quantity></orderitem>\n  </orderitems>\n  <shipping><shippingtype>TRACKED24</shippingtype></shipping>\n</order>"
             }
           ]
         },
@@ -65,7 +65,7 @@
           "urlencoded": [
             {
               "key": "xmlfeed",
-              "value": "<?xml version=\"1.0\"?><order><dropshipper><auth><id>{{email}}</id><key>wrong-key-on-purpose</key></auth></dropshipper><orderno>CONNECTIVITY-TEST</orderno><shippingaddress><firstname>T</firstname><lastname>T</lastname><street>1</street><city>C</city><postcode>M1 1AA</postcode><country_id>GB</country_id></shippingaddress><orderitems><orderitem><product>N0533</product><childproduct/><quantity>1</quantity></orderitem></orderitems><shipping><shippingtype>STANDARD</shippingtype></shipping></order>"
+              "value": "<?xml version=\"1.0\"?><order><dropshipper><auth><id>{{email}}</id><key>wrong-key-on-purpose</key></auth></dropshipper><orderno>CONNECTIVITY-TEST</orderno><shippingaddress><firstname>T</firstname><lastname>T</lastname><street>1</street><city>C</city><postcode>M1 1AA</postcode><country_id>GB</country_id></shippingaddress><orderitems><orderitem><product>N13125</product><childproduct/><quantity>1</quantity></orderitem></orderitems><shipping><shippingtype>STANDARD</shippingtype></shipping></order>"
             }
           ]
         },
