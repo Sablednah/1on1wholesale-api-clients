@@ -34,6 +34,44 @@ All three clients derive the key for you if you only give them the email, but yo
 
 Treat the key like a password: it can place orders on your account and read your order history.
 
+## EU site (1on1wholesale.eu)
+
+The same API runs on our EU site, with its own accounts, keys and endpoints. The clients default to the UK endpoints; point them at the EU ones when you create the client:
+
+```php
+$client = new Net1on1Client('you@yourshop.example', null, [
+    'order_endpoint'  => 'https://www.1on1wholesale.eu/API/order/internal-import/index.php',
+    'status_endpoint' => 'https://www.1on1wholesale.eu/order_status_xml.php',
+]);
+```
+```python
+client = Net1on1Client("you@yourshop.example",
+    order_endpoint="https://www.1on1wholesale.eu/API/order/internal-import/index.php",
+    status_endpoint="https://www.1on1wholesale.eu/order_status_xml.php")
+```
+```js
+const client = new Net1on1Client('you@yourshop.example', null, {
+  orderEndpoint:  'https://www.1on1wholesale.eu/API/order/internal-import/index.php',
+  statusEndpoint: 'https://www.1on1wholesale.eu/order_status_xml.php',
+});
+```
+
+What differs on the EU site:
+
+| | UK (`.co.uk`) | EU (`.eu`) |
+|---|---|---|
+| Shipping | you pick a `shippingtype` (table below) | **automatic** - one service per destination country, `shippingtype` is ignored |
+| Destinations | GB plus international rates | 30 European countries; others (incl. GB) are created without a shipping service and held |
+| Currency | GBP | EUR |
+| `street` | `line1\|line2` splits into two lines | single line, no split |
+| Empty `telephone` / `email` | our office details substituted | stored empty |
+| Status feed window | 14 days; `week=1`, `full=1`, `file=1` | **28 days**; only `full=1` (`week` and `file` are ignored) |
+| Multi-parcel orders in the feed | first parcel only | one `tracking`/`shiptype`/`carrier` group per parcel |
+| Carriers seen | Evri, DPDGroup, RoyalMail, UPS Netherlands | gls / GLS, DSV, UPS, Fedex |
+| Support | sales@1on1wholesale.co.uk | sales@1on1wholesale.eu |
+
+The destination table with charges, and everything else that is EU-specific, is under **My Account → API Documentation** on 1on1wholesale.eu. Everything not listed above (XML structure, response format, error messages, `orderno` uniqueness, all-or-nothing stock rule) is identical.
+
 **Every request needs an HTTP `User-Agent` header.** Requests with none at all are rejected by the firewall with HTTP 403 before reaching the API. The clients set one; if you roll your own, send anything descriptive (`MyShop/1.0`).
 
 ---
