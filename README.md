@@ -74,6 +74,41 @@ The destination table with charges, and everything else that is EU-specific, is 
 
 **Every request needs an HTTP `User-Agent` header.** Requests with none at all are rejected by the firewall with HTTP 403 before reaching the API. The clients set one; if you roll your own, send anything descriptive (`MyShop/1.0`).
 
+## Test server (staging)
+
+Each site has a test copy that takes **the same XML with your normal ID and key**. Orders sent there are never picked, shipped, charged or invoiced, and no emails go to you or your customer. Build and test your integration there, then switch the endpoints to live.
+
+| | UK | EU |
+|---|---|---|
+| Order API | `https://staging.1on1wholesale.co.uk/API/order/internal-import/index.php` | `https://staging.1on1wholesale.eu/API/order/internal-import/index.php` |
+| Status feed | `https://staging.1on1wholesale.co.uk/order_status_xml.php` | `https://staging.1on1wholesale.eu/order_status_xml.php` |
+| Tester page | [staging.1on1wholesale.co.uk/…/upload.php](https://staging.1on1wholesale.co.uk/API/order/internal-import/upload.php) | [staging.1on1wholesale.eu/…/upload.php](https://staging.1on1wholesale.eu/API/order/internal-import/upload.php) |
+
+```php
+$client = new Net1on1Client('you@yourshop.example', null, [
+    'order_endpoint'  => 'https://staging.1on1wholesale.co.uk/API/order/internal-import/index.php',
+    'status_endpoint' => 'https://staging.1on1wholesale.co.uk/order_status_xml.php',
+]);
+```
+```python
+client = Net1on1Client("you@yourshop.example",
+    order_endpoint="https://staging.1on1wholesale.co.uk/API/order/internal-import/index.php",
+    status_endpoint="https://staging.1on1wholesale.co.uk/order_status_xml.php")
+```
+```js
+const client = new Net1on1Client('you@yourshop.example', null, {
+  orderEndpoint:  'https://staging.1on1wholesale.co.uk/API/order/internal-import/index.php',
+  statusEndpoint: 'https://staging.1on1wholesale.co.uk/order_status_xml.php',
+});
+```
+
+In Postman, set the collection variable `base` to `https://staging.1on1wholesale.co.uk` (or `.eu`).
+
+- **Same code as live**, so the same replies, errors and rules: duplicate `orderno`, all-or-nothing stock, the retry limit, shipping types.
+- **Stock follows live**, copied every 15 minutes. Products, prices and accounts are copied from live once a week, so a brand-new account (or a changed login email) may answer `Account with email … not found` until the next copy. Ask us and we will refresh it.
+- **Test orders** are numbered from 90000000, appear in the test server's status feed, and are cleared at each weekly refresh. They never touch your live orders, so an `orderno` used on the test server can be reused on live.
+- It is a test server: it can be briefly unavailable while we update it. Live orders must always go to the `www.` endpoints.
+
 ---
 
 ## Quick start
@@ -261,6 +296,19 @@ Not created (**no partial orders** - fix the failing line and resend with the sa
 
 `productstatus` is `In stock`, `out of stock`, `not available` (SKU unknown) or `variation required - send the variation (NS) SKU in childproduct` (variable product sent without a variation). `orderid` is the 1on1 order number - the `orderref` you will see in the status feed.
 
+**Discontinued products** are ordered like any other: discontinued means we are no longer buying it, not that it can't be ordered. While stock lasts the line is `In stock`; once it has sold out it is `out of stock` and won't come back, so remove it from your listings. `not available` never means discontinued - only that we don't recognise the SKU.
+
+Not processed - the same failed order sent again and again. After **10 failures with exactly the same contents** (same `orderno`, lines, address and shipping) the order is answered straight away without being processed:
+
+```json
+[
+  {"error": 1, "orderstatus": "retry blocked", "message": "Order 12345 has failed 10 times with the same contents and will not be retried until 2026-10-29 21:43 UTC. ..."},
+  {"orderid": null}
+]
+```
+
+One attempt a day still goes through, so an order that was out of stock is accepted once the stock is back. A **changed** order is processed immediately.
+
 Rejected (plain text, still HTTP 200):
 
 | Message | Meaning |
@@ -281,8 +329,14 @@ The clients raise `Net1on1ApiException` / `Net1on1ApiError` for these, and a tra
 - All-or-nothing: an out-of-stock line rejects the whole order.
 - Unknown SKUs reject the order unless `ignore_non_net1on1` is `1`; an order where every line is unknown is rejected either way.
 - New orders arrive as *Pending*. Accounts with credit terms move to *Processing* automatically; otherwise payment is processed on your usual terms first.
+- Don't re-send a failed order unchanged on a timer: after 10 identical failures it is only tried once a day (see *retry blocked* above).
 - Allow 60 s+ for a response.
-- There is no sandbox flag - a valid request creates a real order. Test transport with a wrong key (expect `API Key incorect`) or an order containing an out-of-stock SKU (full validation, nothing created). Email us to arrange genuine test orders.
+- A valid request to the live endpoint creates a real order. Test on the [test server](#test-server-staging); on live, a wrong key (expect `API Key incorect`) or an out-of-stock SKU (full validation, nothing created) are safe.
+
+### Testing and debug output
+
+- **Tester page:** paste an order XML into `…/API/order/internal-import/upload.php` and it shows the result, each line's status, the raw reply and (optionally) the debug trace. The test server's page creates test orders; the live page creates a **real** order and asks you to confirm first.
+- **`debug=1`:** add it as a form field (or `?debug=1`) and the reply is preceded by plain-text lines starting `debug: `, one per step: XML received, account and key checked, each line's stock check, shipping chosen, result. The normal reply is always the last thing in the body, so dropping the `debug: ` lines leaves exactly the reply you would get without debug. For development only.
 
 ---
 
